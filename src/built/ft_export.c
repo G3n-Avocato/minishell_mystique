@@ -6,7 +6,7 @@
 /*   By: gbertet <gbertet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 18:59:02 by lamasson          #+#    #+#             */
-/*   Updated: 2023/05/23 19:42:18 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/05/30 15:08:14 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,29 +94,33 @@ int	ft_parse_name(char *str)
 int	ft_export(char **c, t_files *files)//nom var off change struct ok
 {
 	char	*name;
-	char	*arg;
+	int		i;
 
-	arg = c[2]; //test c[2] vrai c[1]
-	if (!arg)
+	i = 1; //test c[2] vrai c[1]
+	if (!c[i])
 	{
 		ft_export_no_arg(*files); //in bash, tab is sort in alpha order with "declare -x"
 		return (0);
 	}
-	if (ft_parse_name(arg) == 1) //if 1 NAME not ok 
-		return (0);
-	name = rec_var_env(arg);
-	if (name == NULL)
+	while (c[i])
 	{
-		ft_free_tab_env(files);
-		exit (1);
+		if (ft_parse_name(c[i]) == 1) //if 1 NAME not ok 
+			return (0);
+		name = rec_var_env(c[i]);
+		if (name == NULL)  //a revoir
+		{
+			//ft_free_tab_env(files);
+			exit (1);
+		}
+		if (getenv(name) != NULL) //if name var_env exist, switch old_value by new_value
+		{
+			switch_env(files, name, c[i]);
+			return (0);
+		}
+		free(name);
+		ft_realloc_tab_env(files, c[i]); //if name doesn't exist, add new var_env 
+		i++;
 	}
-	if (getenv(name) != NULL) //if name var_env exist, switch old_value by new_value
-	{
-		switch_env(files, name, arg);
-		return (0);
-	}
-	free(name);
-	ft_realloc_tab_env(files, arg); //if name doesn't exist, add new var_env 
 	return (0);
 }
 /*

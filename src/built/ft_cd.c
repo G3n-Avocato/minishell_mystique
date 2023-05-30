@@ -6,7 +6,7 @@
 /*   By: gbertet <gbertet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 18:08:33 by lamasson          #+#    #+#             */
-/*   Updated: 2023/05/19 18:43:21 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/05/30 17:59:56 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	ft_cd(char **c, t_files *files)
 {
 	char	*path;
 	
-	path = c[2]; //c[1]
+	path = c[1];
 	if (path == NULL)
 		return (1);
 	if (chdir(path) != 0)

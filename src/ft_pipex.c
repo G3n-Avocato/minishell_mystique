@@ -6,14 +6,14 @@
 /*   By: lamasson <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 13:47:51 by lamasson          #+#    #+#             */
-/*   Updated: 2023/05/27 18:48:19 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/05/30 19:02:25 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <sys/wait.h>
 
-int	ft_open_fd_in(t_files files)
+int	open_fdin(t_files files)
 {
 	int	op;
 
@@ -25,7 +25,7 @@ int	ft_open_fd_in(t_files files)
 	return (op);
 }
 
-int	ft_open_fd_out(t_files files)
+int	open_fdout(t_files files)
 {
 	int	op;
 
@@ -36,7 +36,7 @@ int	ft_open_fd_out(t_files files)
 		op = open(files.fd_out, O_RDWR | O_CREAT | O_TRUNC, 0644);	
 	return (op);
 }
-
+/*
 static void		ft_dup(int fd_in, int *fd, t_files files, t_mishell mish)
 {
 	if (files.fd_in == NULL && files.pos_cmd == 0)
@@ -67,6 +67,37 @@ static void		ft_dup(int fd_in, int *fd, t_files files, t_mishell mish)
 	//dup2(fd[1], 1);
 	//close(fd[1]);
 
+}*/
+
+static void	ft_dup(int fd_in , int *fd, t_files files, t_mishell mish)
+{
+	int	out;
+
+	if (files.fd_out != NULL && files.pos_cmd == mish.nb_cmds - 1)
+	{
+		close(fd[0]);
+		out = open_fdout(files);
+		dup2(out, 1);
+		close(out);
+	}
+	else if (files.pos_cmd != mish.nb_cmds - 1)
+	{
+		close(fd[0]);
+		dup2(fd[1], 1);
+		close(fd[1]);
+	}
+	if (files.fd_in == NULL && files.pos_cmd == 0 && mish.nb_cmds > 1)
+	{
+		close(fd[1]);
+		dup2(fd[0], 0);
+		close(fd[0]);
+	}
+	else
+	{
+		close(fd[1]);
+		dup2(fd_in, 0);
+		close(fd_in);
+	}
 }
 
 static int		ft_fork(t_mishell mish, t_files files, int fd_in, int *fd)
@@ -91,18 +122,16 @@ static int		ft_fork(t_mishell mish, t_files files, int fd_in, int *fd)
 	return (0);
 }
 
+//gestion close here_doc voir si implementer
 static int	ft_pipe(t_mishell mish, t_files files, int fd_in)
 {
 	int	fd[2];
 	
 	if (pipe(fd) == -1)
 	{
-		perror("pipe"); //erreur de fct
+		perror("pipe");
 		exit (1);
 	}
-	//if (files.fd_in == NULL && fd_in == -1)
-	//	fd_in = fd[0];
-	//gestion close here_doc voir si implementer
 	ft_fork(mish, files, fd_in, fd);
 	close(fd[1]);
 	if (fd_in > 0)
@@ -115,15 +144,15 @@ int	ft_call_pipex(t_mishell mish, t_files *files)
 	int	fd_in;
 
 	files->pos_cmd = 0;
-	fd_in = ft_open_fd_in(*files);
-	while (files->pos_cmd < mish.nb_cmds - 1)
+	fd_in = open_fdin(*files);
+	while (files->pos_cmd < mish.nb_cmds)
 	{
 		if (check_built_no_fork(mish.cmds[files->pos_cmd].c, files) == 0)
 			fd_in = ft_pipe(mish, *files, fd_in);
 		files->pos_cmd++;
 	}
-	ft_pipe(mish, *files, fd_in);
-	close(fd_in);
+	if (fd_in > 0)
+		close(fd_in);
 	return (0);
 }
 
@@ -137,14 +166,18 @@ int	main(int argc, char **argv, char **env)
 	(void)argc;
 	(void)argv;
 
-	tab_str = malloc(6 * sizeof(char *));
-	tab_str[0] = "cat";
-	tab_str[1] = "t.c";
-	tab_str[2] = "|";
-	tab_str[3] = "wc";
-	//tab_str[4] = "-l";
+	tab_str = malloc(5 * sizeof(char *));
+	tab_str[0] = "unset";
+	tab_str[1] = "LESS";
+	tab_str[2] = "PAGER";
+	tab_str[3] = "DISPLAY";
+/*	tab_str[4] = "PAGER=SAUCISSE";
+	tab_str[5] = "wc";
+	tab_str[6] =  "-l";
+	tab_str[7] = ">";
+	tab_str[8] = "test";*/
 	tab_str[4] = NULL;
-	str = "cat t.c | wc";
+	str = "unset LESS PAGER DISPLAY"; // NOM_VARIABLE=0 NOM_VARIABLE1=1 NOM_VARIABLE2=2 PAGER=SAUCISSE";
 //parsing et init pour test //
 	mish.full_cmd = normalize_str(str);
 	get_cmds(&mish);
@@ -165,36 +198,17 @@ int	main(int argc, char **argv, char **env)
 //pipex en test //
 	
 	ft_call_pipex(mish, &files);
-/*
-	j = 0;
-	while (mish.cmds[j].c)
+
+	printf("\n\n");
+	int	i = 0;
+	while (files.tab_var_env[i])
 	{
-		i = 0;
-		while (mish.cmds[j].c[i])
-		{
-			printf("\"%s\" ", mish.cmds[j].c[i]);
-			i++;
-		}
-		printf("\n");
-		j++;
+		printf("%s\n\n", files.tab_var_env[i]);
+		i++;
 	}
-	printf("%d\n", mish.nb_cmds);
-	return (0);*/
 	free(tab_str);	
 
 	ft_free_files(&files);
 	ft_free_cmds(&mish);
 	return (0);
 }
-/*
-
-"ls" "-l" 
-"grep" ".txt" 
-"cat" ">" "saucisse" 
-"cat" 
-"cat" 
-"grep" "ls" 
-
-6
-
-*/

@@ -6,7 +6,7 @@
 /*   By: lamasson <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 13:47:51 by lamasson          #+#    #+#             */
-/*   Updated: 2023/05/30 19:02:25 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/05/31 19:05:55 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,18 +166,20 @@ int	main(int argc, char **argv, char **env)
 	(void)argc;
 	(void)argv;
 
-	tab_str = malloc(5 * sizeof(char *));
-	tab_str[0] = "unset";
-	tab_str[1] = "LESS";
-	tab_str[2] = "PAGER";
-	tab_str[3] = "DISPLAY";
-/*	tab_str[4] = "PAGER=SAUCISSE";
-	tab_str[5] = "wc";
+	tab_str = malloc(3 * sizeof(char *));
+	tab_str[0] = "export";
+	tab_str[1] = "TEST";
+/*	tab_str[2] = "saucii6se=2";
+	tab_str[3] = "my-var=3";
+	tab_str[4] = "PAGER=4";
+	tab_str[5] = "var$=5";
 	tab_str[6] =  "-l";
 	tab_str[7] = ">";
 	tab_str[8] = "test";*/
-	tab_str[4] = NULL;
-	str = "unset LESS PAGER DISPLAY"; // NOM_VARIABLE=0 NOM_VARIABLE1=1 NOM_VARIABLE2=2 PAGER=SAUCISSE";
+	tab_str[2] = NULL;
+	str = "export TEST";
+	//1SAUCISSE=1 saucii6se=2 my-var=3 PAGER=4 var$=5"; // NOM_VARIABLE=0 NOM_VARIABLE1=1 NOM_VARIABLE2=2 PAGER=SAUCISSE";
+
 //parsing et init pour test //
 	mish.full_cmd = normalize_str(str);
 	get_cmds(&mish);
@@ -203,6 +205,7 @@ int	main(int argc, char **argv, char **env)
 	int	i = 0;
 	while (files.tab_var_env[i])
 	{
+		//if (ft_strncmp(files.tab_var_env[i], "PWD", 3) == 0 || ft_strncmp(files.tab_var_env[i], "OLDPWD", 6) == 0)
 		printf("%s\n\n", files.tab_var_env[i]);
 		i++;
 	}

@@ -6,7 +6,7 @@
 /*   By: gbertet <gbertet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 18:59:02 by lamasson          #+#    #+#             */
-/*   Updated: 2023/05/30 15:08:14 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/05/31 19:07:04 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,14 @@ char	*rec_var_env(char *str)
 		i++;
 	}
 	name = ft_substr(str, 0, i);
+	if (!name)
+		exit (1);
+	if (ft_strncmp(name, "PWD", 3) == 0 || ft_strncmp(name, "OLDPWD", 6) == 0 \
+		|| ft_strncmp(name, "HOME", 4) == 0 || ft_strncmp(name, "USER", 4) == 0)
+	{
+		free(name);
+		return (NULL);
+	}
 	return (name);
 }
 
@@ -76,50 +84,49 @@ void	switch_env(t_files *files, char *name, char *str)
 }
 
 /* check syntax name de la var_env */
-//refaire
 int	ft_parse_name(char *str)
 {
 	int	i;
 
-	i = 0;
-	while (str[i] != '\0')
+	i = 1;
+	if (ft_isalpha(str[0]) != 1)
+		return (1);
+	while (str[i])
 	{
-		if (str[0] == '_' && str[1] == '=')
+		if (str[i] == '=')
+			break ;
+		if (ft_isalnum(str[i]) != 1 && str[i] != '_' && str[i] != '-')
 			return (1);
 		i++;
 	}
 	return (0);
 }
 
-int	ft_export(char **c, t_files *files)//nom var off change struct ok
+int	ft_export(char **c, t_files *files)
 {
 	char	*name;
 	int		i;
 
-	i = 1; //test c[2] vrai c[1]
-	if (!c[i])
+	i = 0;
+	if (!c[1])
 	{
-		ft_export_no_arg(*files); //in bash, tab is sort in alpha order with "declare -x"
+		ft_export_no_arg(*files);
 		return (0);
 	}
-	while (c[i])
+	while (c[++i])
 	{
-		if (ft_parse_name(c[i]) == 1) //if 1 NAME not ok 
-			return (0);
+		if (ft_parse_name(c[i]) == 1) 
+			continue ;
 		name = rec_var_env(c[i]);
-		if (name == NULL)  //a revoir
-		{
-			//ft_free_tab_env(files);
-			exit (1);
-		}
-		if (getenv(name) != NULL) //if name var_env exist, switch old_value by new_value
-		{
+		if (!name)  //si NULL tentative de modifier une var_env essentiel au fct du program
+			return (1);
+		if (getenv(name) != NULL)
 			switch_env(files, name, c[i]);
-			return (0);
+		else
+		{
+			free(name);
+			ft_realloc_tab_env(files, c[i]); 
 		}
-		free(name);
-		ft_realloc_tab_env(files, c[i]); //if name doesn't exist, add new var_env 
-		i++;
 	}
 	return (0);
 }

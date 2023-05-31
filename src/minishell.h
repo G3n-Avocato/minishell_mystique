@@ -6,7 +6,7 @@
 /*   By: gbertet <gbertet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:30:57 by lamasson          #+#    #+#             */
-/*   Updated: 2023/05/30 14:38:09 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/05/31 15:29:42 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,9 @@ int		ft_pwd(char **c);
 
 //		FT_CD.C					//
 int		ft_cd(char **c, t_files *files);
+int		parsing_cd(char **c);
+int		ft_user_path(char **c);
+char	*ft_home_directory(void);
 
 //		FT_ECHO.C				//
 void	ft_echo_arg(char *s);

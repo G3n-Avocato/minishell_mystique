@@ -6,7 +6,7 @@
 /*   By: gbertet <gbertet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:30:57 by lamasson          #+#    #+#             */
-/*   Updated: 2023/05/31 15:29:42 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/06/02 17:26:10 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,23 @@ typedef struct s_files{
 	int		pos_cmd;		//position dans le tab des cmds pendant son execution
 }t_files;
 
+typedef struct s_var_env{
+	int					nb_dol;
+	char				*str;
+	int					len;
+	int					pos_s;
+	int					f_len;
+	struct s_new_str	*val;
+}t_var_env;
+
+typedef struct s_new_str{
+	int		i_dol;
+	int		start;
+	int		len_n;
+	char	*name;
+	char	*new_str;
+	int		new_len;
+}t_new_str;
 
 //		MAIN.C					//
 void	get_cmds(t_mishell *m);

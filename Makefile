@@ -6,7 +6,7 @@
 #    By: gbertet <gbertet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/24 17:11:07 by lamasson          #+#    #+#              #
-#    Updated: 2023/05/26 15:37:24 by lamasson         ###   ########.fr        #
+#    Updated: 2023/06/02 16:04:10 by lamasson         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,8 @@ SRC			= src/ft_check_builtins.c \
 			src/built/ft_export.c \
 			src/built/ft_export_utils.c \
 			src/built/ft_pwd.c \
-			src/built/ft_unset.c
+			src/built/ft_unset.c \
+			src/ft_parsing_var_env.c
 
 OBJ			= $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 LIBFT		= libft

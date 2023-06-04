@@ -6,7 +6,7 @@
 /*   By: lamasson <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 17:29:51 by lamasson          #+#    #+#             */
-/*   Updated: 2023/06/02 18:48:26 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/06/04 17:38:03 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +14,38 @@
 
 char *ft_join_all_str(t_var_env *data)
 {
-	char	*final_s;
-	char	*buf;
-	char	*tmp;
-	int		len_p;
+	char	*buf = NULL;
+	char	*tmp = NULL;
+	int		new_start;
+	int		end;
 	int		i;
 
 	i = 0;
-	if (data->val[0].start > 1)
+	new_start = data->val[i].start - 1;
+	end = 0;	
+	while (i <= data->nb_dol && end < data->len)
 	{
-		buf = ft_substr(data->str, 0, data->val[0].start - 2);
-		buf = ft_strjoin(buf, data->val[i].new_str);
-	}
-	len_p = data->val[i].start + data->val[i].len_n; 
-	while (i < data->nb_dol)
-	{
-		if (data->val[i + 1] && len_p == data->val[i + 1].start)
-			tmp = ft_strjoin(data->val[i].new_str, data->val[i + 1]);
-		len_p = data->val[i].start + data->val[i].len_n; 
-		else if (i + 1 == data->nb_dol && data->str[len_p] != len  )
+		if (new_start != end)
 		{
-
-			buf = ft_substr(data->str, len_p, len - len_p);
-
+			buf = ft_substr(data->str, end, new_start - end);
+			if (!tmp)
+				tmp = ft_strdup(buf);
+			else
+				tmp = ft_strjoin(tmp, buf);
+			end += ft_strlen(buf);
+			free(buf);
 		}
-
-
+		if (data->val[i].new_str != NULL)
+		{
+			tmp = ft_strjoin(tmp, data->val[i].new_str);
+			end += data->val[i].len_n + 1;
+			i++;
+		}
+		if (data->val[i].new_str != NULL)
+			new_start = data->val[i].start - 1;
+		else
+			new_start = data->len;
 	}
-
-
-
+	printf("len = %ld\n", ft_strlen(tmp));
+	return (tmp);
 }

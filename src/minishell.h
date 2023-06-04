@@ -6,7 +6,7 @@
 /*   By: gbertet <gbertet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:30:57 by lamasson          #+#    #+#             */
-/*   Updated: 2023/06/02 17:26:10 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/06/04 16:13:36 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ typedef struct s_var_env{
 }t_var_env;
 
 typedef struct s_new_str{
-	int		i_dol;
+	int		i_dol; //
 	int		start;
 	int		len_n;
 	char	*name;
@@ -148,6 +148,10 @@ char	**ft_split_minishell(char const *s, char c);
 //		FT_PARSING_CMD.C		//
 int		empty_str(const char *s);
 int		synthax_check(char *s);
+
+//		FT_PARSING_VAR_ENV.C	//
+char	*ft_join_all_str(t_var_env *data);
+void	ft_free_data_var_env(t_var_env *data, int i);
 
 //		FT_INIT_TAB_ENV.C		//
 void	ft_init_tab_env(char **env, t_files *files);

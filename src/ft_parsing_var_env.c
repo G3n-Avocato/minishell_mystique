@@ -6,7 +6,7 @@
 /*   By: lamasson <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 15:00:23 by lamasson          #+#    #+#             */
-/*   Updated: 2023/06/02 17:28:52 by lamasson         ###   ########.fr       */
+/*   Updated: 2023/06/04 17:31:33 by lamasson         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,10 @@ void	ft_init_new_str(t_files files, t_var_env *data)
 		ft_wheel_tab_var_env(files, data, i);
 		i++; 
 	}
-
-
+	data->val[i].new_str = NULL;
+	finish = ft_join_all_str(data);
+	printf("%s\n", finish);
+	free(finish);
 }
 
 int	ft_check_end_name(char *str, int i)
@@ -113,6 +115,7 @@ void	ft_parse_struct_var_env(char *str, t_var_env *data)
 		data->len++;
 	}
 	data->val = malloc(sizeof(t_new_str) * (data->nb_dol + 1));
+	data->val[data->nb_dol].name = NULL;
 	while (i < data->nb_dol)
 	{
 		data->val[i].i_dol = i;
@@ -133,7 +136,7 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 	char	*str;	
 
-	str = "$PWD.SDSS"; // = lamasson.SDSS $USER$USER = lamassonlamasson $USERldl = ""
+	str = "lol$PWD.SDSS"; // = lamasson.SDSS $USER$USER = lamassonlamasson $USERldl = ""
 	t_files	files;
 	ft_init_tab_env(env, &files);
 	
@@ -148,12 +151,13 @@ int	main(int argc, char **argv, char **env)
 	ft_parse_struct_var_env(str, &data);
 	ft_init_new_str(files, &data);
 
-	int	i = 0;
+/*	int	i = 0;
 	while (i < data.nb_dol)
 	{
 		printf("%s\n", data.val[i].new_str);
 		i++;
-	}
+	}*/
+	ft_free_tab(files.tab_var_env);
 	ft_free_data_var_env(&data, data.nb_dol);
 	return (0);
 }
@@ -165,6 +169,7 @@ void	ft_free_data_var_env(t_var_env *data, int i)
 	{
 		free(data->val[i].name);
 		free(data->val[i].new_str);
+		i--;
 	}
 	free(data->val);
 }
